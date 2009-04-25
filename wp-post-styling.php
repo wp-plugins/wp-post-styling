@@ -3,7 +3,7 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.0.0
+Version: 1.1.0
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -33,12 +33,83 @@ $exit_msg=__('WP Post Styling requires WordPress 2.3 or more recent. <a href="ht
 	exit ($exit_msg);
 	}
 
+function insert_new_library_style( $name, $css, $type) {
+	global $wpdb;
+	$name = $wpdb->escape($name);
+	$css = $wpdb->escape($css);
+	$type = $wpdb->escape($type);
+	$table_name = $wpdb->prefix . "post_styling_library";
+	$query = "INSERT INTO `$table_name` (`name`,`css`,`type`)
+		VALUES ('$name','$css','$type')";
+		$results = $wpdb->query($query);
+	if ($results) {
+	return TRUE;
+	} else {
+	return FALSE;
+	}
+}	
+	
+function jd_create_post_styling_library_table() {
+	global $wpdb;
+	$post_styling_db_version = "1.0";	
+	$table_name = $wpdb->prefix . "post_styling_library";
+    if ( $wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name ) {
+	$sql = "CREATE TABLE " . $table_name . " (
+	  id mediumint(9) NOT NULL AUTO_INCREMENT,
+	  name tinytext NOT NULL,
+	  css text NOT NULL,
+	  type VARCHAR(32) NOT NULL,
+	  UNIQUE KEY id (id)
+	);";
+	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+	dbDelta($sql);
+	}	
+	add_option( "post_styling_db_version", $post_styling_db_version );	
+    $installed_ver = get_option( "post_styling_db_version" );
+    if ( $installed_ver != $post_styling_db_version ) {
+	$sql = "CREATE TABLE " . $table_name . " (
+	  id mediumint(9) NOT NULL AUTO_INCREMENT,
+	  name tinytext NOT NULL,
+	  css text NOT NULL,
+	  type VARCHAR(32) NOT NULL,
+	  UNIQUE KEY id (id)
+	);";
+      //require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+	require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); 
+    dbDelta($sql);
+    update_option( "post_styling_db_version", $post_styling_db_version );
+	}
+}	
+
+function jd_post_style_library_selector($current="screen") {
+	// select library items from database where library is print
+	global $wpdb;
+	$prefix = $wpdb->prefix;
+	$dbtable = $prefix . 'post_styling_library';
+	$results = $wpdb->get_results(
+		"SELECT `name`, `css`
+		FROM `$dbtable`
+		WHERE `type` = '$current'
+		ORDER BY name ASC
+		");
+		
+	if (count($results)) {
+		foreach ($results as $result) {
+			echo '<option value="'. htmlspecialchars($result->css).'">'. ($result->name) .'</option>'."\n";
+		}
+	} else {
+		echo '<option value="none">Library is empty.</option>';
+	}
+}
+	
 // Add custom Tweet field on Post & Page write/edit forms
 function jd_add_post_styling_textinput() {
 	global $post;
 	$post_id = $post;
 	if (is_object($post_id)) {
 		$post_id = $post_id->ID;
+	} else {
+		$post_id = $post_id;
 	}
 	$jd_post_styling_print = htmlspecialchars(stripcslashes(get_post_meta($post_id, 'jd_post_styling_print', true)));
 	$jd_post_styling_mobile = htmlspecialchars(stripcslashes(get_post_meta($post_id, 'jd_post_styling_mobile', true)));
@@ -50,7 +121,7 @@ function jd_add_post_styling_textinput() {
 		} else {
 		$jd_selected = array('',' checked="checked"');
 		}
-	$jd_box_size = get_option('wp-post-styling-box-size');
+	$jd_box_size = get_option('jd-post-styling-boxsize');
 	if ($jd_box_size == "") {
 	$jd_box_size = 6;
 	}
@@ -72,7 +143,15 @@ function jd_add_post_styling_textinput() {
 	<?php } ?>
 	<?php if ( get_option( 'jd-post-styling-screen' ) == '1' ) { ?>
 	<p>
-	<label for="jd_post_styling_screen"><?php _e('Custom Screen Styles For This Post', 'wp-post-styling') ?></label><br /><textarea name="jd_post_styling_screen" id="jd_post_styling_screen" rows="<?php echo $jd_box_size; ?>" cols="60"><?php echo $jd_post_styling_screen ?></textarea>
+	<label for="jd_post_styling_screen"><?php _e('Custom Screen Styles For This Post', 'wp-post-styling'); ?></label><br /><textarea name="jd_post_styling_screen" id="jd_post_styling_screen" rows="<?php echo $jd_box_size; ?>" cols="60"><?php echo $jd_post_styling_screen; ?></textarea>
+	</p>
+	<p>
+	<label for="jd_post_styling_screen_library"><?php _e('Custom Screen Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_screen_library" name="jd_post_styling_screen_library">
+	<option value="none">Select library style</option>
+	<?php
+	jd_post_style_library_selector("screen");
+	?>
+	</select>
 	</p>
 	<?php } ?>
 	
@@ -80,12 +159,28 @@ function jd_add_post_styling_textinput() {
 	<p>
 	<label for="jd_post_styling_mobile"><?php _e('Custom Mobile Styles For This Post', 'wp-post-styling') ?></label><br /><textarea name="jd_post_styling_mobile" id="jd_post_styling_mobile" rows="<?php echo $jd_box_size; ?>" cols="60"><?php echo $jd_post_styling_mobile ?></textarea>
 	</p>
+		<p>
+	<label for="jd_post_styling_mobile_library"><?php _e('Custom Mobile Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_mobile_library" name="jd_post_styling_mobile_library">
+	<option value="none">Select library style</option>
+	<?php
+	jd_post_style_library_selector("mobile");
+	?>	
+	</select>
+	</p>
 	<?php } ?>
 	
 	<?php if ( get_option( 'jd-post-styling-print' ) == '1' ) { ?>
 	<p>
 	<label for="jd_post_styling_print"><?php _e('Custom Print Styles For This Post', 'wp-post-styling') ?></label><br /><textarea name="jd_post_styling_print" id="jd_post_styling_print" rows="<?php echo $jd_box_size; ?>" cols="60"><?php echo $jd_post_styling_print ?></textarea>
 	</p>
+	<p>
+	<label for="jd_post_styling_print_library"><?php _e('Custom Print Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_print_library" name="jd_post_styling_print_library">
+	<option value="none">Select library style</option>
+	<?php
+	jd_post_style_library_selector("print");
+	?>
+	</select>
+	</p>	
 	<?php } ?>
 	
 	<p><a target="__blank" href="http://www.joedolson.com/articles/wp-post-styling/"><?php _e('Get Support', 'wp-post-styling') ?></a> &raquo;
@@ -106,20 +201,38 @@ function jd_add_post_styling_textinput() {
 // Post the Custom Tweet into the post meta table
 function set_jd_post_styling( $id ) {
 	$jd_post_styling_screen = $_POST[ 'jd_post_styling_screen' ];
+	$jd_post_styling_screen_library = $_POST[ 'jd_post_styling_screen_library' ];
+	if ($jd_post_styling_screen_library == "none") {
 		if (isset($jd_post_styling_screen) && !empty($jd_post_styling_screen)) {
 		delete_post_meta( $id, 'jd_post_styling_screen' );
 		add_post_meta( $id, 'jd_post_styling_screen', $jd_post_styling_screen );
 		}
+	} else {
+		delete_post_meta( $id, 'jd_post_styling_screen' );
+		add_post_meta( $id, 'jd_post_styling_screen', $jd_post_styling_screen_library );
+	}
 	$jd_post_styling_print = $_POST[ 'jd_post_styling_print' ];
+	$jd_post_styling_print_library = $_POST[ 'jd_post_styling_print_library' ];
+	if ($jd_post_styling_print_library == "none") {	
 		if (isset($jd_post_styling_print) && !empty($jd_post_styling_print)) {
 		delete_post_meta( $id, 'jd_post_styling_print' );
 		add_post_meta( $id, 'jd_post_styling_print', $jd_post_styling_print );
 		}
+	} else {
+		delete_post_meta( $id, 'jd_post_styling_print' );
+		add_post_meta( $id, 'jd_post_styling_print', $jd_post_styling_print_library );
+	}		
 	$jd_post_styling_mobile = $_POST[ 'jd_post_styling_mobile' ];
+	$jd_post_styling_mobile_library = $_POST[ 'jd_post_styling_mobile_library' ];
+	if ($jd_post_styling_mobile_library == "none") {	
 		if (isset($jd_post_styling_mobile) && !empty($jd_post_styling_mobile)) {
 		delete_post_meta( $id, 'jd_post_styling_mobile' );
 		add_post_meta( $id, 'jd_post_styling_mobile', $jd_post_styling_mobile );
 		}		
+	} else {
+		delete_post_meta( $id, 'jd_post_styling_mobile' );
+		add_post_meta( $id, 'jd_post_styling_mobile', $jd_post_styling_mobile_library );
+	}		
 	$jd_style_this = $_POST[ 'jd_style_this' ];
 	if (isset($jd_style_this) && !empty($jd_style_this)) {		
 		if ($jd_style_this == 'disable') {
@@ -135,6 +248,7 @@ function set_jd_post_styling( $id ) {
 function post_jd_post_styling() {
 	global $wp_query;
 	$this_post = $wp_query->get_queried_object();
+	if (is_object($this_post)) {
 	$id = $this_post->ID;
 	if ( get_post_meta( $id, 'jd_style_this', TRUE ) == 'enable' ) {
 echo "<!-- Styles Added by WP Post Styling (http://www.joedolson.com/articles/wp-post-styling/) -->\n";
@@ -161,6 +275,7 @@ $this_post_styles\n
 			}	
 echo "<!-- End WP Post Styling -->\n";	
 	}
+	}
 }
 
 
@@ -168,7 +283,8 @@ echo "<!-- End WP Post Styling -->\n";
 
 function jd_addpost_stylingAdminPages() {
     if ( function_exists( 'add_submenu_page' ) ) {
-		 add_options_page( 'WP Post Styling', 'WP Post Styling', 8, __FILE__, 'jd_wp_post_styling_manage_page' );
+		 $plugin_page = add_options_page( 'WP Post Styling', 'WP Post Styling', 8, __FILE__, 'jd_wp_post_styling_manage_page' );
+		 add_action( 'admin_head-'. $plugin_page, 'jd_addPostStylingAdminStyles' );		 
     }
  }
 // Include the Manager page
@@ -177,8 +293,45 @@ function jd_wp_post_styling_manage_page() {
 }
 function jd_post_styling_plugin_action($links, $file) {
 	if ($file == plugin_basename(dirname(__FILE__).'/wp-post-styling.php'))
-		$links[] = "<a href='options-general.php?page=wp-post-styling/wp-post-styling-manager.php'>" . __('Settings', 'wp-post-styling') . "</a>";
+		$links[] = "<a href='options-general.php?page=wp-post-styling/wp-post-styling.php'>" . __('Settings', 'wp-post-styling') . "</a>";
 	return $links;
+}
+
+function jd_addPostStylingAdminStyles() {
+ $post_styling_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );
+	echo "
+<style type=\"text/css\">
+<!-- 
+#wp-post-styling {
+margin: 0 15px;
+}
+#wp-post-styling fieldset {
+margin: 0;
+padding:0;
+border: none;
+}
+#wp-post-styling legend {
+font-weight: 700;
+}
+#wp-post-styling form p {
+background: #eaf3fa;
+padding: 4px 5px;
+margin: 2px 0;
+}
+#wp-post-styling form .error p {
+background: none;
+border: none;
+}
+#wp-post-styling .post-styling-options {
+width: 45%;
+float: left;
+}
+#wp-post-styling .post-styling-library {
+width: 45%;
+margin-left: 48%;
+}
+-->
+</style>";
 }
 
 //Add Plugin Actions and Filters to WordPress
@@ -196,4 +349,6 @@ if ( substr( get_bloginfo( 'version' ), 0, 3 ) >= '2.5' ) {
 add_action( 'save_post', 'set_jd_post_styling' );
 add_action( 'wp_head','post_jd_post_styling' );
 add_action( 'admin_menu', 'jd_addpost_stylingAdminPages' );
+register_activation_hook(__FILE__,'jd_create_post_styling_library_table');
+
 ?>
