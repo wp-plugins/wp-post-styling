@@ -29,7 +29,7 @@ A newly-selected style from the style library will always overwrite any previous
 
 * Added Changelog
 * Added ability to edit CSS in the style library
-* Updated post interface to use post 2.6 drag-and-drop options
+* Updated post interface to use post-2.6 drag-and-drop options
 * Made translation ready
 
 = 1.1.0 =
