@@ -2,8 +2,8 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: css, post, page, custom, styling, admin, mobile, print
-Requires at least: 2.3
-Tested up to: 2.7.1
+Requires at least: 2.5
+Tested up to: 2.9.0
 Stable tag: trunk
 
 Allows you to define custom styles for any specific post or page on your WordPress site. This is particularly useful for journal-style publications which want to provide a unique character for specific articles.
@@ -14,11 +14,6 @@ This plugin simply provides a custom field on your WordPress interface where you
 
 The use you'll get out of this plugin depends on the flexibility of the theme you're using and your own knowledge of CSS (Cascading Style Sheets).
 
-**New in version 1.1.0:**
-
-* Added a database to store pre-determined style groups. 
-* Corrected a few layout bugs.
-
 How to use the style library:
 
 1. Add the styles you want on your settings page.
@@ -26,7 +21,21 @@ How to use the style library:
 1. Select the library style from the drop down, leaving the style textarea blank.
 1. Update or post the new document.
 
-A selected style from the style library will always overwrite any other hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template. 
+A newly-selected style from the style library will always overwrite any previous hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template. Editing your templates will have no impact on previously saved post-specific styles. 
+
+== Changelog ==
+
+= 1.2.0 =
+
+* Added Changelog
+* Added ability to edit CSS in the style library
+* Updated post interface to use post 2.6 drag-and-drop options
+* Made translation ready
+
+= 1.1.0 =
+
+* Added a database to store pre-determined style groups. 
+* Corrected a few layout bugs.
 
 == Installation ==
 
@@ -45,6 +54,8 @@ You really do need to know CSS to get anywhere with this. Given the huge variety
 = The Custom styles I added aren't showing up in my blog -- why not? =
 
 Well, this is just a stab in the dark, but it's possible that the developer of your theme didn't use the WordPress function <code>wp_head</code>, which needs to be in your theme for this plugin to work. 
+
+
 
 == Screenshots ==
 

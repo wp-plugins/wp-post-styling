@@ -3,7 +3,7 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.1.0
+Version: 1.2.0
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -48,6 +48,21 @@ function insert_new_library_style( $name, $css, $type) {
 	return FALSE;
 	}
 }	
+	
+function update_library_style( $id, $name, $css, $type) {
+	global $wpdb;
+	$name = $wpdb->escape($name);
+	$css = $wpdb->escape($css);
+	$type = $wpdb->escape($type);
+	$table_name = $wpdb->prefix . "post_styling_library";
+	$query = "UPDATE `$table_name` SET `name`='$name',`css`='$css',`type`='$type' WHERE `id`=$id";
+		$results = $wpdb->query($query);
+	if ($results) {
+	return TRUE;
+	} else {
+	return FALSE;
+	}
+}		
 	
 function jd_create_post_styling_library_table() {
 	global $wpdb;
@@ -98,12 +113,86 @@ function jd_post_style_library_selector($current="screen") {
 			echo '<option value="'. htmlspecialchars($result->css).'">'. ($result->name) .'</option>'."\n";
 		}
 	} else {
-		echo '<option value="none">Library is empty.</option>';
+		echo '<option value="none">'.__('Library is empty.','wp-post-styling').'</option>';
 	}
 }
 	
+function jd_post_style_data($id,$datatype) {
+	// select library items from database where library is print
+	global $wpdb;
+	$prefix = $wpdb->prefix;
+	$dbtable = $prefix . 'post_styling_library';
+	$results = $wpdb->get_results(
+		"SELECT `$datatype`
+		FROM `$dbtable`
+		WHERE `id` = '$id'
+		");
+	if (count($results)) {
+		foreach ($results as $result) {
+			return $result->$datatype;
+		}
+	} 		
+}	
+	
+function jd_post_style_library_listing() {
+	// select all library items from database 
+	global $wpdb;
+	$table = "<table id=\"wp-style-library\" summary=\"".__('Listing of CSS patterns in the Style Library.','wp-post-styling')."\">
+	<thead><tr><th scope=\"col\">".__('Name','wp-post-styling')."</th><th scope=\"col\">".__('Styles','wp-post-styling')."</th><th scope=\"col\">".__('Type','wp-post-styling')."</th></tr></thead>
+	<tbody>";
+	$table_end = "</tbody></table>";
+	$prefix = $wpdb->prefix;
+	$dbtable = $prefix . 'post_styling_library';
+	$results = $wpdb->get_results(
+		"SELECT `id`, `name`, `css`, `type`
+		FROM `$dbtable`
+		ORDER BY name ASC
+		");
+		
+	if (count($results)) {
+		foreach ($results as $result) {
+			if ($odd_or_even == "odd") { $odd_or_even = "even"; } else { $odd_or_even = "odd"; }
+			$table .= "<tr scope=\"row\" class=\"$odd_or_even\"><td><a href=\"?page=wp-post-styling/wp-post-styling.php&amp;edit_style=".($result->id)."\">". ($result->name) .'</a></td><td>'. htmlspecialchars($result->css).'</td><td>'. ($result->type) .'</td></tr>'."\n";
+		}
+		$write_table = TRUE;
+	} else {
+		$table_values = '<p>'.__('Library is empty.','wp-post-styling').'</p>';
+		$write_table = FALSE;
+	}
+	if ($write_table == TRUE) {
+		echo $table;
+		echo $table_end;
+	} else {
+		echo $table_values;
+	}
+return;
+}	
+
+add_action('admin_menu','jd_add_post_styling_outer_box');
+add_action('admin_menu','jd_addpost_stylingAdminPages');
+
+
+function jd_add_post_styling_old_box() {
+?>
+
+<div class="dbx-b-ox-wrapper">
+<fieldset id="wppoststylingdiv" class="dbx-box">
+<div class="dbx-h-andle-wrapper">
+<h3 class="dbx-handle"><?php _e('WP Post Styling', 'wp-post-styling', 'wp-post-styling') ?></h3>
+</div>
+<div class="dbx-c-ontent-wrapper">
+<div class="dbx-content">
+<?php
+jd_add_post_styling_inner_box();
+?>
+</div>
+</fieldset>
+</div>
+<?php
+}
+	
 // Add custom Tweet field on Post & Page write/edit forms
-function jd_add_post_styling_textinput() {
+function jd_add_post_styling_inner_box() {
 	global $post;
 	$post_id = $post;
 	if (is_object($post_id)) {
@@ -126,21 +215,6 @@ function jd_add_post_styling_textinput() {
 	$jd_box_size = 6;
 	}
 	?>
-	<?php /* Compatibility with version 2.3 and below (needs to be tested.) */ ?>
-	<?php if (substr(get_bloginfo('version'), 0, 3) >= '2.5') { ?>
-	<div id="wp-post-styling" class="postbox closed">
-	<h3><?php _e('WP Post Styling', 'wp-post-styling') ?></h3>
-	<div class="inside">
-	<div id="jd-post-styling">
-	<?php } else { ?>
-	<div class="dbx-b-ox-wrapper">
-	<fieldset id="stylediv" class="dbx-box">
-	<div class="dbx-h-andle-wrapper">
-	<h3 class="dbx-handle"><?php _e('WP Post Styling', 'wp-post-styling') ?></h3>
-	</div>
-	<div class="dbx-c-ontent-wrapper">
-	<div class="dbx-content">
-	<?php } ?>
 	<?php if ( get_option( 'jd-post-styling-screen' ) == '1' ) { ?>
 	<p>
 	<label for="jd_post_styling_screen"><?php _e('Custom Screen Styles For This Post', 'wp-post-styling'); ?></label><br /><textarea name="jd_post_styling_screen" id="jd_post_styling_screen" rows="<?php echo $jd_box_size; ?>" cols="60"><?php echo $jd_post_styling_screen; ?></textarea>
@@ -189,13 +263,17 @@ function jd_add_post_styling_textinput() {
 	<input type="radio" name="jd_style_this" value="disable"<?php echo $jd_selected[0]; ?> id="jd_style_this" /> <label for="jd_style_this">Disable custom styles on this post.</label>
 	<input type="radio" name="jd_style_this" value="enable"<?php echo $jd_selected[1]; ?> id="jd_style_this_enable" /> <label for="jd_style_this_enable">Enable custom styles on this post.</label>	
 </p>
-	<?php if (substr(get_bloginfo('version'), 0, 3) >= '2.5') { ?>
-	</div></div></div>
-	<?php } else { ?>
-	</div>
-	</fieldset>
-	</div>
-	<?php } 
+<?php
+}
+
+function jd_add_post_styling_outer_box() {
+	if ( function_exists( 'add_meta_box' )) {
+    add_meta_box( 'poststyling_div','WP Post Styling', 'jd_add_post_styling_inner_box', 'post', 'advanced' );
+	add_meta_box( 'poststyling_div','WP Post Styling', 'jd_add_post_styling_inner_box', 'page', 'advanced' );	
+   } else {
+    add_action('dbx_post_advanced', 'jd_add_post_styling_old_box' );
+	add_action('dbx_page_advanced', 'jd_add_post_styling_old_box' );
+  }
 }
 
 // Post the Custom Tweet into the post meta table
@@ -330,6 +408,35 @@ float: left;
 width: 45%;
 margin-left: 48%;
 }
+.resources {
+float: right;
+border: 1px solid #aaa;
+padding: 10px 10px 0;
+margin-left: 10px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+border-radius: 5px;
+background: #fff;
+text-align: center;
+}
+#wp-post-styling .resources form {
+margin: 0;
+}
+#wp-style-library {
+width: 100%;
+}
+#wp-style-library tr {
+background: #eaf3fa;
+}
+#wp-style-library tr.odd {
+background: none;
+}
+#wp-style-library td, #wp-style-library th {
+padding: 3px;
+}
+#wp-style-library th {
+border: 1px solid #d9e2f9;
+}
 -->
 </style>";
 }
@@ -338,17 +445,9 @@ margin-left: 48%;
 
 add_filter('plugin_action_links', 'jd_post_styling_plugin_action', -10, 2);
 
-if ( substr( get_bloginfo( 'version' ), 0, 3 ) >= '2.5' ) {
-	add_action( 'edit_form_advanced','jd_add_post_styling_textinput' );
-	add_action( 'edit_page_form','jd_add_post_styling_textinput' );
-} else {
-	add_action( 'dbx_post_advanced','jd_add_post_styling_textinput' );
-	add_action( 'dbx_page_advanced','jd_add_post_styling_textinput' );
-}
-
 add_action( 'save_post', 'set_jd_post_styling' );
 add_action( 'wp_head','post_jd_post_styling' );
-add_action( 'admin_menu', 'jd_addpost_stylingAdminPages' );
+
 register_activation_hook(__FILE__,'jd_create_post_styling_library_table');
 
 ?>
