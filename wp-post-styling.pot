@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-post-styling\n"
-"POT-Creation-Date: 2009-04-25 15:39+0000\n"
+"POT-Creation-Date: 2009-12-14 19:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,22 +25,30 @@ msgid "Please enter a name for this Style Library record."
 msgstr ""
 
 #: wp-post-styling-manager.php:30
-msgid "Please enter some CSS for this Style Library record."
+msgid "Please enter styling instructions for this Style Library record."
 msgstr ""
 
 #: wp-post-styling-manager.php:33
 msgid "Please select a type for this Style Library record."
 msgstr ""
 
-#: wp-post-styling-manager.php:39
+#: wp-post-styling-manager.php:43
 msgid "WP Post Styling Library Updated"
 msgstr ""
 
-#: wp-post-styling-manager.php:41
+#: wp-post-styling-manager.php:45
 msgid "WP Post Styling Library Update Failed"
 msgstr ""
 
-#: wp-post-styling-manager.php:65
+#: wp-post-styling-manager.php:67
+msgid "WP Post Styling Settings"
+msgstr ""
+
+#: wp-post-styling-manager.php:71 wp-post-styling.php:260
+msgid "Get Support"
+msgstr ""
+
+#: wp-post-styling-manager.php:85
 msgid ""
 "This plugin offers the possibility of adding up to three additional fields "
 "to your posting interface for adding styles. Usually, you'll probably only "
@@ -49,94 +57,101 @@ msgid ""
 "this."
 msgstr ""
 
-#: wp-post-styling-manager.php:68
+#: wp-post-styling-manager.php:88
 msgid ""
 "Note that the styles you assign a given post using this plugin will only "
 "apply to that post's individual post page, and will <em>not</em> be applied "
 "on any archive pages."
 msgstr ""
 
-#: wp-post-styling-manager.php:71
-msgid "WP Post Styling Options"
+#: wp-post-styling-manager.php:91
+msgid "General Settings"
 msgstr ""
 
-#: wp-post-styling-manager.php:74
+#: wp-post-styling-manager.php:94
 msgid "WordPress Post Styling Options"
 msgstr ""
 
-#: wp-post-styling-manager.php:77
+#: wp-post-styling-manager.php:97
 msgid "Add Custom Screen Styles"
 msgstr ""
 
-#: wp-post-styling-manager.php:81
+#: wp-post-styling-manager.php:101
 msgid "Add Custom Mobile Styles"
 msgstr ""
 
-#: wp-post-styling-manager.php:85
+#: wp-post-styling-manager.php:105
 msgid "Add Custom Print Styles"
 msgstr ""
 
-#: wp-post-styling-manager.php:89
+#: wp-post-styling-manager.php:109
 msgid "Disable Custom Styles as default condition"
 msgstr ""
 
-#: wp-post-styling-manager.php:93
+#: wp-post-styling-manager.php:113
 msgid "Size of custom style text box (in lines.)"
 msgstr ""
 
-#: wp-post-styling-manager.php:100
+#: wp-post-styling-manager.php:120
 msgid "Save WP Post Styling Options"
 msgstr ""
 
-#: wp-post-styling-manager.php:105
+#: wp-post-styling-manager.php:125
 msgid "Custom Style Library"
 msgstr ""
 
-#: wp-post-styling-manager.php:108
+#: wp-post-styling-manager.php:131
 msgid "Add Custom Style to Library"
 msgstr ""
 
-#: wp-post-styling-manager.php:110
+#: wp-post-styling-manager.php:131
+msgid "Edit Custom Styles"
+msgstr ""
+
+#: wp-post-styling-manager.php:133
 msgid "Style Name"
 msgstr ""
 
-#: wp-post-styling-manager.php:113
+#: wp-post-styling-manager.php:136
 msgid "CSS"
 msgstr ""
 
-#: wp-post-styling-manager.php:116
+#: wp-post-styling-manager.php:139
 msgid "Library Type"
 msgstr ""
 
-#: wp-post-styling-manager.php:116
+#: wp-post-styling-manager.php:139
 msgid "Screen"
 msgstr ""
 
-#: wp-post-styling-manager.php:116
+#: wp-post-styling-manager.php:139
 msgid "Mobile"
 msgstr ""
 
-#: wp-post-styling-manager.php:116
+#: wp-post-styling-manager.php:139
 msgid "Print"
 msgstr ""
 
-#: wp-post-styling-manager.php:123
+#: wp-post-styling-manager.php:146
 msgid "Add to WP Post Styling Library"
 msgstr ""
 
-#: wp-post-styling-manager.php:130
-msgid "Need help?"
+#: wp-post-styling-manager.php:146
+msgid "Update WP Post Styling Library"
 msgstr ""
 
-#: wp-post-styling-manager.php:131
-msgid ""
-"Visit the <a href=\"http://www.joedolson.com/articles/wp-post-styling/\">WP "
-"Post Styling plugin page</a>."
+#: wp-post-styling-manager.php:149
+msgid "Add New Style"
 msgstr ""
 
-#: wp-post-styling-manager.php:132
+#: wp-post-styling-manager.php:153
+msgid "Your Style Library"
+msgstr ""
+
+#: wp-post-styling-manager.php:158
 msgid ""
-"<a href=\"http://www.joedolson.com/donate.php\">Support this plugin</a>."
+"Note: editing the styles in your style library will not effect any "
+"previously published posts using those styles."
 msgstr ""
 
 #: wp-post-styling.php:30
@@ -146,41 +161,57 @@ msgid ""
 "version!</a>"
 msgstr ""
 
+#: wp-post-styling.php:116 wp-post-styling.php:159
+msgid "Library is empty."
+msgstr ""
+
+#: wp-post-styling.php:140
+msgid "Listing of CSS patterns in the Style Library."
+msgstr ""
+
+#: wp-post-styling.php:141
+msgid "Name"
+msgstr ""
+
+#: wp-post-styling.php:141
+msgid "Styles"
+msgstr ""
+
+#: wp-post-styling.php:141
+msgid "Type"
+msgstr ""
+
 #. #-#-#-#-#  plugin.pot (PACKAGE VERSION)  #-#-#-#-#
 #. Plugin Name of an extension
-#: wp-post-styling.php:132 wp-post-styling.php:139
+#: wp-post-styling.php:181
 msgid "WP Post Styling"
 msgstr ""
 
-#: wp-post-styling.php:146
+#: wp-post-styling.php:220
 msgid "Custom Screen Styles For This Post"
 msgstr ""
 
-#: wp-post-styling.php:149
+#: wp-post-styling.php:223
 msgid "Custom Screen Style Library"
 msgstr ""
 
-#: wp-post-styling.php:160
+#: wp-post-styling.php:234
 msgid "Custom Mobile Styles For This Post"
 msgstr ""
 
-#: wp-post-styling.php:163
+#: wp-post-styling.php:237
 msgid "Custom Mobile Style Library"
 msgstr ""
 
-#: wp-post-styling.php:174
+#: wp-post-styling.php:248
 msgid "Custom Print Styles For This Post"
 msgstr ""
 
-#: wp-post-styling.php:177
+#: wp-post-styling.php:251
 msgid "Custom Print Style Library"
 msgstr ""
 
-#: wp-post-styling.php:186
-msgid "Get Support"
-msgstr ""
-
-#: wp-post-styling.php:296
+#: wp-post-styling.php:374
 msgid "Settings"
 msgstr ""
 
