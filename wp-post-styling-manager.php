@@ -21,7 +21,7 @@ $wp_post_styling_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . d
 
 	} 
 	if ( $_POST['submit-type'] == 'library' ) {
-		if ( ($_POST[ 'jd_style_library_name' ] == "") || ($_POST[ 'jd_style_library_css' ] == "") || ($_POST[ 'jd_style_library_type' ] == "") ) {
+		if ( (($_POST[ 'jd_style_library_name' ] == "") || ($_POST[ 'jd_style_library_css' ] == "") || ($_POST[ 'jd_style_library_type' ] == "")) && !isset($_POST['delete_style']) ) {
 		$message = "<ul>";
 			if ( $_POST[ 'jd_style_library_name' ] == "" ) {
 			$message .= "<li>" . __("Please enter a name for this Style Library record.",'wp-post-styling') . "</li>";
@@ -36,17 +36,38 @@ $wp_post_styling_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . d
 		} else {
 			if (isset($_POST['edit_style'])) {
 			$results = update_library_style( $_POST['edit_style'], $_POST[ 'jd_style_library_name' ], $_POST[ 'jd_style_library_css' ], $_POST[ 'jd_style_library_type' ]);			
+			$type = "update";
+			} elseif (isset($_POST['delete_style'])) {
+            $results = delete_library_style( $_POST['delete_style'] );
+			$type = "delete";
 			} else {
+			$type = "insert";
 			$results = insert_new_library_style( $_POST[ 'jd_style_library_name' ], $_POST[ 'jd_style_library_css' ], $_POST[ 'jd_style_library_type' ]);
 			}
-			if ($results == TRUE) {
-			$message = __("WP Post Styling Library Updated",'wp-post-styling');
+			if ( $results == TRUE ) {
+				if ( $type == "update" ) {
+				$message = __("WP Post Styling Library Updated",'wp-post-styling');
+				} elseif ( $type == "delete" ) {
+				$message = __("Record Deleted from WP Post Styling Library",'wp-post-styling');				
+				} elseif ( $type == "insert" ) {
+				$message = __("Recorded Added to WP Post Styling Library",'wp-post-styling');				
+				}
 			} else {
 			$message = __("WP Post Styling Library Update Failed",'wp-post-styling');
 			}
 		}
 	}
-
+	if (isset($_GET['delete_style'])) {
+		$delete_style = (int) $_GET['delete_style'];
+		$message = __("Are you sure you want to delete this record?",'wp-post-styling');
+		$message .= "<form method=\"post\" action=\"?page=wp-post-styling/wp-post-styling.php\">
+		<div>
+		<input type=\"hidden\" name=\"delete_style\" value=\"$delete_style\" />
+		<input type=\"hidden\" name=\"submit-type\" value=\"library\" />
+		<input type=\"submit\" name=\"submit\" class=\"button-primary\" value=\"".__('Yes, delete it!',"wp-post-styling")."\" />
+		</div>
+		</form>";
+	}
 	// FUNCTION to see if checkboxes should be checked
 	function jd_checkCheckbox( $theFieldname ){
 		if( get_option( $theFieldname ) == '1'){

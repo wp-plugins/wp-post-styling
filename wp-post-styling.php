@@ -3,7 +3,7 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.2.0
+Version: 1.2.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -27,9 +27,9 @@ $jd_plugin_url = "http://www.joedolson.com/articles/wp-post-styling/";
 
 global $wp_version;	
 
-$exit_msg=__('WP Post Styling requires WordPress 2.3 or more recent. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>');
+$exit_msg=__('WP Post Styling requires WordPress 2.5 or more recent. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>');
 
-	if ( version_compare( $wp_version,"2.3","<" )) {
+	if ( version_compare( $wp_version,"2.5","<" )) {
 	exit ($exit_msg);
 	}
 
@@ -56,6 +56,18 @@ function update_library_style( $id, $name, $css, $type) {
 	$type = $wpdb->escape($type);
 	$table_name = $wpdb->prefix . "post_styling_library";
 	$query = "UPDATE `$table_name` SET `name`='$name',`css`='$css',`type`='$type' WHERE `id`=$id";
+		$results = $wpdb->query($query);
+	if ($results) {
+	return TRUE;
+	} else {
+	return FALSE;
+	}
+}	
+
+function delete_library_style( $id ) {
+	global $wpdb;
+	$table_name = $wpdb->prefix . "post_styling_library";
+	$query = "DELETE FROM `$table_name` WHERE `id`=$id";
 		$results = $wpdb->query($query);
 	if ($results) {
 	return TRUE;
@@ -138,9 +150,9 @@ function jd_post_style_library_listing() {
 	// select all library items from database 
 	global $wpdb;
 	$table = "<table id=\"wp-style-library\" summary=\"".__('Listing of CSS patterns in the Style Library.','wp-post-styling')."\">
-	<thead><tr><th scope=\"col\">".__('Name','wp-post-styling')."</th><th scope=\"col\">".__('Styles','wp-post-styling')."</th><th scope=\"col\">".__('Type','wp-post-styling')."</th></tr></thead>
-	<tbody>";
-	$table_end = "</tbody></table>";
+<thead>\n<tr>\n	<th scope=\"col\">".__('Name','wp-post-styling')."</th>\n	<th scope=\"col\">".__('Styles','wp-post-styling')."</th>\n	<th scope=\"col\">".__('Type','wp-post-styling')."</th>\n	<th>".__('Delete','wp-post-styling')."</th>\n</tr>\n</thead>
+<tbody>\n";
+	$table_end = "</tbody>\n</table>";
 	$prefix = $wpdb->prefix;
 	$dbtable = $prefix . 'post_styling_library';
 	$results = $wpdb->get_results(
@@ -152,7 +164,7 @@ function jd_post_style_library_listing() {
 	if (count($results)) {
 		foreach ($results as $result) {
 			if ($odd_or_even == "odd") { $odd_or_even = "even"; } else { $odd_or_even = "odd"; }
-			$table .= "<tr scope=\"row\" class=\"$odd_or_even\"><td><a href=\"?page=wp-post-styling/wp-post-styling.php&amp;edit_style=".($result->id)."\">". ($result->name) .'</a></td><td>'. htmlspecialchars($result->css).'</td><td>'. ($result->type) .'</td></tr>'."\n";
+			$table .= "<tr class=\"$odd_or_even\">\n	<td><a href=\"?page=wp-post-styling/wp-post-styling.php&amp;edit_style=".($result->id)."\">". ($result->name) ."</a></td>\n	<td>". htmlspecialchars($result->css)."</td>\n	<td>". ($result->type) ."</td>\n	<td>".'<a href="?page=wp-post-styling/wp-post-styling.php&amp;delete_style='.($result->id).'" class="delete">Delete</a></td>'."\n".'</tr>'."\n";
 		}
 		$write_table = TRUE;
 	} else {
@@ -436,6 +448,21 @@ padding: 3px;
 }
 #wp-style-library th {
 border: 1px solid #d9e2f9;
+}
+#wp-style-library .delete {
+background: #a00;
+color: #fff;
+padding: 2px 8px;
+font-size: .8em;
+border: 1px solid #fff;
+-moz-border-radius: 8px;
+-webkit-border-radius: 8px;
+border-radius: 8px;
+text-decoration: none;
+}
+#wp-style-library .delete:hover, #wp-style-library .delete:focus {
+border: 1px solid #999;
+background: #b11;
 }
 -->
 </style>";
