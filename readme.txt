@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== WP Post Styling ===
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: css, post, page, custom, styling, admin, mobile, print
@@ -24,6 +24,10 @@ How to use the style library:
 A newly-selected style from the style library will always overwrite any previous hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template. Editing your templates will have no impact on previously saved post-specific styles. 
 
 == Changelog ==
+
+= 1.2.2 = 
+
+* Added stripslashes so that styles which require quotes will be usable.
 
 = 1.2.1 =
 

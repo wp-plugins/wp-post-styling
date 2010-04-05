@@ -343,21 +343,21 @@ function post_jd_post_styling() {
 	if ( get_post_meta( $id, 'jd_style_this', TRUE ) == 'enable' ) {
 echo "<!-- Styles Added by WP Post Styling (http://www.joedolson.com/articles/wp-post-styling/) -->\n";
 			if ( get_post_meta( $id, 'jd_post_styling_screen', TRUE) != '') {
-			$this_post_styles = get_post_meta( $id, 'jd_post_styling_screen', TRUE );
+			$this_post_styles = stripcslashes( get_post_meta( $id, 'jd_post_styling_screen', TRUE ) );
 			echo "
 <style type='text/css' media='screen'>\n
 $this_post_styles\n
 </style>\n";
 			}
 			if ( get_post_meta( $id, 'jd_post_styling_mobile', TRUE) != '' ) {
-			$this_post_styles = get_post_meta( $id, 'jd_post_styling_mobile', TRUE );
+			$this_post_styles = stripcslashes( get_post_meta( $id, 'jd_post_styling_mobile', TRUE ) );
 			echo "
 <style type='text/css' media='handheld'>\n
 $this_post_styles\n
 </style>\n";
 			}
 			if ( get_post_meta( $id, 'jd_post_styling_print', TRUE) != '' ) {
-			$this_post_styles = get_post_meta( $id, 'jd_post_styling_print', TRUE );
+			$this_post_styles = stripcslashes( get_post_meta( $id, 'jd_post_styling_print', TRUE ) );
 			echo "
 <style type='text/css' media='print'>\n
 $this_post_styles\n
