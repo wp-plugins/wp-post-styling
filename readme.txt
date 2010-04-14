@@ -27,7 +27,7 @@ A newly-selected style from the style library will always overwrite any previous
 
 = 1.2.2 = 
 
-* Added stripslashes so that styles which require quotes will be usable.
+* Added stripslashes so that styles which require quotes will be consistently usable. (Background images, :before and :after, etc.) 
 
 = 1.2.1 =
 

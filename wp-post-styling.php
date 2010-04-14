@@ -3,7 +3,7 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.2.1
+Version: 1.2.2
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
