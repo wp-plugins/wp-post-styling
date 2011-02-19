@@ -1,8 +1,5 @@
 <?php
-global $wp_version;
-$wp_post_styling_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );
-
-	// Set Default Options
+// Set Default Options
 	if( get_option( 'post-styling-initial') != '1' ) {
 		update_option( 'jd-post-styling-screen', '1' );
 		update_option( 'post-styling-initial', '1' );
@@ -69,14 +66,16 @@ $wp_post_styling_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . d
 		</form>";
 	}
 	// FUNCTION to see if checkboxes should be checked
-	function jd_checkCheckbox( $theFieldname ){
-		if( get_option( $theFieldname ) == '1'){
-			echo 'checked="checked"';
+	if ( !function_exists('jc_checkCheckbox') ) {
+		function jd_checkCheckbox( $theFieldname ){
+			if( get_option( $theFieldname ) == '1'){
+				echo 'checked="checked"';
+			}
 		}
 	}
 ?>
 <?php if ($message) : ?>
-<div id="message" class="updated fade"><?php echo $message; ?></div>
+<div id="message" class="updated fade"><p><?php echo $message; ?></p></div>
 <?php endif; ?>
 <div id="dropmessage" class="updated" style="display:none;"></div>
 
@@ -93,11 +92,12 @@ $wp_post_styling_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . d
 <li><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <div>
 <input type="hidden" name="cmd" value="_s-xclick" />
-<input type="hidden" name="hosted_button_id" value="8490399" />
-<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="Donate" />
-<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+<input type="hidden" name="hosted_button_id" value="5C4T2NCL4GEBE" />
+<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="Donate!" />
+<img alt="" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 </div>
-</form></li>
+</form>
+</li>
 </ul>
 
 </div>
@@ -154,7 +154,7 @@ $wp_post_styling_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . d
 		<label for="jd_style_library_name"><?php _e('Style Name','wp-post-styling'); ?></label><br /><input type="text" name="jd_style_library_name" id="jd_style_library_name" value="<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; echo jd_post_style_data($id,"name"); } ?>" size="40" />
 		</p>
 		<p>
-		<label for="jd_style_library_css"><?php _e('CSS','wp-post-styling'); ?></label><br /><textarea name="jd_style_library_css" id="jd_style_library_css" rows="6" cols="40"><?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; echo stripcslashes( jd_post_style_data( $id,"css" ) ); } ?></textarea>
+		<label for="jd_style_library_css"><?php _e('CSS','wp-post-styling'); ?></label><br /><textarea name="jd_style_library_css" id="jd_style_library_css" rows="6" cols="50"><?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; echo stripcslashes( jd_post_style_data( $id,"css" ) ); } ?></textarea>
 		</p>
 		<p>
 		<label for="jd_style_library_type"><?php _e('Library Type','wp-post-styling'); ?></label> <select name="jd_style_library_type" id="jd_style_library_type"><option value="screen"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "screen") { echo " selected=\"selected\""; } } ?>><?php _e('Screen'); ?></option><option value="mobile"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "mobile") { echo " selected=\"selected\""; } } ?>><?php _e('Mobile'); ?></option><option value="print"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "print") { echo " selected=\"selected\""; } } ?>><?php _e('Print'); ?></option></select>
@@ -179,6 +179,9 @@ $wp_post_styling_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . d
 <?php _e('Note: editing the styles in your style library will not effect any previously published posts using those styles.','wp-post-styling'); ?>
 </p>
 </div>
-<?php if ( version_compare( $wp_version,"2.7",">" )) {
+<?php 
+global $wp_version; 
+if ( version_compare( $wp_version,"2.7",">" )) {
 echo "</div>";
-} ?>
+} 
+?>

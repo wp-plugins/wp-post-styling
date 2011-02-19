@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: css, post, page, custom, styling, admin, mobile, print
 Requires at least: 2.5
-Tested up to: 2.9.1
+Tested up to: 3.1-RC5
 Stable tag: trunk
 
 Allows you to define custom styles for any specific post or page on your WordPress site. This is particularly useful for journal-style publications which want to provide a unique character for specific articles.
@@ -24,6 +24,13 @@ How to use the style library:
 A newly-selected style from the style library will always overwrite any previous hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template. Editing your templates will have no impact on previously saved post-specific styles. 
 
 == Changelog ==
+
+= 1.2.3 = 
+
+* Clean up on deprecated calls
+* Switch post meta to private 
+* Placed admin styles into separate file
+* Bug fix: Custom styles would periodically disappear from post.
 
 = 1.2.2 = 
 
