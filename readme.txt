@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: css, post, page, custom, styling, admin, mobile, print
 Requires at least: 2.5
-Tested up to: 3.1-RC5
+Tested up to: 3.3 beta
 Stable tag: trunk
 
 Allows you to define custom styles for any specific post or page on your WordPress site. This is particularly useful for journal-style publications which want to provide a unique character for specific articles.
