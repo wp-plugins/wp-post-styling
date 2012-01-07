@@ -3,7 +3,7 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.2.3
+Version: 1.2.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -49,15 +49,15 @@ $wpmu_plugin_dir = $wp_content_dir . '/mu-plugins';
 
 // Upgrade post meta
 if ( get_option( 'wp_post_styling_version') ) {
-$version = get_option( 'wp_post_styling_version' ); 
+	$version = get_option( 'wp_post_styling_version' ); 
 } else {
-$version = '1.2.2'; // could be anything less, but this is the first version with an upgrade routine.
+	$version = '1.2.2'; // could be anything less, but this is the first version with an upgrade routine.
 }
 if ( version_compare( $version, '1.2.3',"<" )) {
 	// update all post meta to match new format
 	jd_fix_post_style_meta();
 }
-$version = '1.2.3';
+$version = '1.2.4';
 update_option( 'wp_post_styling_version',$version );
 
 // Exit if below version requirements
@@ -315,14 +315,22 @@ function jd_add_post_styling_inner_box() {
 
 function jd_add_post_styling_outer_box() {
 	if ( function_exists( 'add_meta_box' )) {
-    add_meta_box( 'poststyling_div','WP Post Styling', 'jd_add_post_styling_inner_box', 'post', 'advanced' );
-	add_meta_box( 'poststyling_div','WP Post Styling', 'jd_add_post_styling_inner_box', 'page', 'advanced' );	
-   } else {
-    add_action('dbx_post_advanced', 'jd_add_post_styling_old_box' );
-	add_action('dbx_page_advanced', 'jd_add_post_styling_old_box' );
-  }
+		if ( function_exists( 'get_post_types' ) ) {
+			$post_types = get_post_types( array(), 'objects' );
+			foreach ( $post_types as $post_type ) {
+				if ( $post_type->show_ui ) {
+					add_meta_box( 'poststyling_div','WP Post Styling', 'jd_add_post_styling_inner_box', $post_type->name, 'advanced' );
+				}
+			}
+		} else {		
+			add_meta_box( 'poststyling_div','WP Post Styling', 'jd_add_post_styling_inner_box', 'post', 'advanced' );
+			add_meta_box( 'poststyling_div','WP Post Styling', 'jd_add_post_styling_inner_box', 'page', 'advanced' );
+		}
+	} else {
+		add_action('dbx_post_advanced', 'jd_add_post_styling_old_box' );
+		add_action('dbx_page_advanced', 'jd_add_post_styling_old_box' );
+	}
 }
-
 // Post the custom styles into the post meta table
 function set_jd_post_styling( $id ) {
 	if (isset($_POST['jd_post_styling_screen'])) {

@@ -89,6 +89,7 @@
 <div class="resources">
 <ul>
 <li><a href="http://www.joedolson.com/articles/wp-post-styling/"><?php _e("Get Support",'wp-post-styling'); ?></a></li>
+<li><a href="http://wordpress.org/extend/plugins/profile/joedolson"><?php _e("Check out my other plug-ins",'wp-post-styling'); ?></a></li>
 <li><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <div>
 <input type="hidden" name="cmd" value="_s-xclick" />
@@ -99,7 +100,6 @@
 </form>
 </li>
 </ul>
-
 </div>
 
 <p>

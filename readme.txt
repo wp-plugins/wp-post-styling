@@ -1,16 +1,18 @@
 === WP Post Styling ===
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
-Tags: css, post, page, custom, styling, admin, mobile, print
+Tags: css, post, page, custom, styling, admin, mobile, print, design
 Requires at least: 2.5
-Tested up to: 3.3 beta
+Tested up to: 3.4 alpha
 Stable tag: trunk
 
-Allows you to define custom styles for any specific post or page on your WordPress site. This is particularly useful for journal-style publications which want to provide a unique character for specific articles.
+Define custom styles for any specific post, page, or custom post type. Example: journal-style publications which want to provide a unique character for each article.
 
 == Description ==
 
-This plugin simply provides a custom field on your WordPress interface where you can add custom styles to be applied only on that page or post. Useful for being able to publish articles with a unique look.
+This plugin provides a custom field on your WordPress interface where you can add custom styles to be applied only on that page or post. Useful for being able to publish articles with a unique look.
+
+You can attach custom styles to any page, post, or custom post type. Separate styles can be attached for print, screen, or mobile. You can also store your own library of frequently-used styles. 
 
 The use you'll get out of this plugin depends on the flexibility of the theme you're using and your own knowledge of CSS (Cascading Style Sheets).
 
@@ -24,6 +26,10 @@ How to use the style library:
 A newly-selected style from the style library will always overwrite any previous hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template. Editing your templates will have no impact on previously saved post-specific styles. 
 
 == Changelog ==
+
+= 1.2.4 =
+
+* Added support for custom post types (thanks to Jordi for suggestion)
 
 = 1.2.3 = 
 
