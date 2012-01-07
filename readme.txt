@@ -6,7 +6,7 @@ Requires at least: 2.5
 Tested up to: 3.4 alpha
 Stable tag: trunk
 
-Define custom styles for any specific post, page, or custom post type. Example: journal-style publications which want to provide a unique character for each article.
+Define custom styles for any post, page, or custom post type. Example: journal-style publications which want to create a unique design for articles.
 
 == Description ==
 
