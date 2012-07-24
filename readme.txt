@@ -1,9 +1,9 @@
 === WP Post Styling ===
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
-Tags: css, post, page, custom, styling, admin, mobile, print, design
+Tags: css, post, page, custom, css, admin, mobile, print, design
 Requires at least: 2.5
-Tested up to: 3.4 alpha
+Tested up to: 3.4.1
 Stable tag: trunk
 
 Define custom styles for any post, page, or custom post type. Example: journal-style publications which want to create a unique design for articles.
@@ -23,9 +23,18 @@ How to use the style library:
 1. Select the library style from the drop down, leaving the style textarea blank.
 1. Update or post the new document.
 
-A newly-selected style from the style library will always overwrite any previous hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template. Editing your templates will have no impact on previously saved post-specific styles. 
+A newly-selected style from the style library will always overwrite any previous hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template. Editing your saved stylesheets will have no impact on previously saved post-specific styles. 
+
+Note: custom styles will not be included on archive pages; only on single post/Page views.
+
+Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
 == Changelog ==
+
+= 1.2.5 =
+
+* Revised style editing layout to increase text box for editing custom styles. 
+* Bug fixes: removed PHP notices.
 
 = 1.2.4 =
 

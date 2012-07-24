@@ -3,11 +3,11 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.2.4
+Version: 1.2.5
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
-/*  Copyright 2008-2011  Joseph C Dolson  (email : wp-post-styling@joedolson.com)
+/*  Copyright 2008-2012  Joseph C Dolson  (email : wp-post-styling@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ if ( version_compare( $version, '1.2.3',"<" )) {
 	// update all post meta to match new format
 	jd_fix_post_style_meta();
 }
-$version = '1.2.4';
+$version = '1.2.5';
 update_option( 'wp_post_styling_version',$version );
 
 // Exit if below version requirements
@@ -197,9 +197,10 @@ function jd_post_style_library_listing() {
 		");
 		
 	if (count($results)) {
+		$odd_or_even = 'even';
 		foreach ($results as $result) {
 			if ($odd_or_even == "odd") { $odd_or_even = "even"; } else { $odd_or_even = "odd"; }
-			$table .= "<tr class=\"$odd_or_even\">\n	<td><a href=\"?page=wp-post-styling/wp-post-styling.php&amp;edit_style=".($result->id)."\">". ($result->name) ."</a></td>\n	<td>". htmlspecialchars($result->css)."</td>\n	<td>". ($result->type) ."</td>\n	<td>".'<a href="?page=wp-post-styling/wp-post-styling.php&amp;delete_style='.($result->id).'" class="delete">Delete</a></td>'."\n".'</tr>'."\n";
+			$table .= "<tr class=\"$odd_or_even\">\n	<td><a href=\"?page=wp-post-styling/wp-post-styling.php&amp;edit_style=".($result->id)."\">". ($result->name) ."</a></td>\n	<td>". htmlspecialchars(stripslashes($result->css))."</td>\n	<td>". ($result->type) ."</td>\n	<td class='delete'>".'<a href="?page=wp-post-styling/wp-post-styling.php&amp;delete_style='.($result->id).'">Delete</a></td>'."\n".'</tr>'."\n";
 		}
 		$write_table = TRUE;
 	} else {

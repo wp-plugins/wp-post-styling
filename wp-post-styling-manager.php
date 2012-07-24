@@ -1,5 +1,6 @@
 <?php
 // Set Default Options
+$message = ''; 
 	if( get_option( 'post-styling-initial') != '1' ) {
 		update_option( 'jd-post-styling-screen', '1' );
 		update_option( 'post-styling-initial', '1' );
@@ -7,7 +8,7 @@
 		update_option( 'jd-post-styling-boxsize', '6' );
 	}
 		
-	if ( $_POST['submit-type'] == 'options' ) {
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'options' ) {
 		//UPDATE OPTIONS
 		update_option( 'jd-post-styling-screen', $_POST['jd-post-styling-screen'] );
 		update_option( 'jd-post-styling-mobile', $_POST['jd-post-styling-mobile'] );
@@ -17,7 +18,7 @@
 		$message = __("WP Post Styling Options Updated",'wp-post-styling');
 
 	} 
-	if ( $_POST['submit-type'] == 'library' ) {
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'library' ) {
 		if ( (($_POST[ 'jd_style_library_name' ] == "") || ($_POST[ 'jd_style_library_css' ] == "") || ($_POST[ 'jd_style_library_type' ] == "")) && !isset($_POST['delete_style']) ) {
 		$message = "<ul>";
 			if ( $_POST[ 'jd_style_library_name' ] == "" ) {
@@ -66,7 +67,7 @@
 		</form>";
 	}
 	// FUNCTION to see if checkboxes should be checked
-	if ( !function_exists('jc_checkCheckbox') ) {
+	if ( !function_exists('jd_checkCheckbox') ) {
 		function jd_checkCheckbox( $theFieldname ){
 			if( get_option( $theFieldname ) == '1'){
 				echo 'checked="checked"';
@@ -79,7 +80,7 @@
 <?php endif; ?>
 <div id="dropmessage" class="updated" style="display:none;"></div>
 
-	<?php if ( version_compare( $wp_version,"2.7",">" )) {
+	<?php global $wp_version; if ( version_compare( $wp_version,"2.7",">" )) {
 	echo "<div class=\"wrap\">";
 	} ?>
 
@@ -89,6 +90,7 @@
 <div class="resources">
 <ul>
 <li><a href="http://www.joedolson.com/articles/wp-post-styling/"><?php _e("Get Support",'wp-post-styling'); ?></a></li>
+<li><a href="http://www.joedolson.com/articles/bugs/"><?php _e("Report a bug",'wp-post-styling'); ?></a></li>
 <li><a href="http://wordpress.org/extend/plugins/profile/joedolson"><?php _e("Check out my other plug-ins",'wp-post-styling'); ?></a></li>
 <li><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <div>
@@ -102,13 +104,41 @@
 </ul>
 </div>
 
+<div class="post-styling-library">
+	<form method="post" action="">
+	<?php if (isset($_GET['edit_style']))  { ?>
+	<div><input type="hidden" name="edit_style" value="<?php echo (int) $_GET['edit_style']; ?>" /></div>
+	<?php } ?>
+		<fieldset>
+		<legend><?php if (!isset($_GET['edit_style'])) { _e('Add a Custom Style','wp-post-styling'); } else { _e('Edit Custom Style','wp-post-styling'); } ?></legend>
+		<p>
+		<label for="jd_style_library_name"><?php _e('Style Name','wp-post-styling'); ?></label><br /><input type="text" name="jd_style_library_name" id="jd_style_library_name" value="<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; echo jd_post_style_data($id,"name"); } ?>" size="40" />
+		</p>
+		<p>
+		<label for="jd_style_library_css"><?php _e('CSS','wp-post-styling'); ?></label><br /><textarea name="jd_style_library_css" id="jd_style_library_css" rows="20" cols="50"><?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; echo stripcslashes( jd_post_style_data( $id,"css" ) ); } ?></textarea>
+		</p>
+		<p>
+		<label for="jd_style_library_type"><?php _e('Library Type','wp-post-styling'); ?></label> <select name="jd_style_library_type" id="jd_style_library_type"><option value="screen"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "screen") { echo " selected=\"selected\""; } } ?>><?php _e('Screen'); ?></option><option value="mobile"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "mobile") { echo " selected=\"selected\""; } } ?>><?php _e('Mobile'); ?></option><option value="print"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "print") { echo " selected=\"selected\""; } } ?>><?php _e('Print'); ?></option></select>
+		</p>
+		</fieldset>
+		<div>
+		<input type="hidden" name="submit-type" value="library" />
+		</div>	
+	<p>
+	<input type="submit" name="submit" class="button-primary" value="<?php if (!isset($_GET['edit_style'])) {  _e('Add to WP Post Styling Library','wp-post-styling'); } else { _e('Update WP Post Styling Library','wp-post-styling'); }?>" />	
+	</p>
+	</form>
+<?php if (isset($_GET['edit_style'])) { echo "<p><a href=\"?page=wp-post-styling/wp-post-styling.php\">"; _e('Add New Style','wp-post-styling'); echo "</a></p>"; } ?>
+</div>
+
+<div class="post-styling-options">
 <p>
-<?php _e("This plugin offers the possibility of adding up to three additional fields to your posting interface for adding styles. Usually, you'll probably only need to add custom screen styles, but you can also choose to add mobile or print media styles for each post, if your default style sheets don't cover this."); ?>
+<?php _e("This plugin adds up to three style fields to your posting interface for adding custom styles. Usually, you'll only need custom screen styles, but you can also choose to add mobile or print media styles for each post, if your default style sheets don't cover this."); ?>
 </p>
 <p>
 <?php _e("Note that the styles you assign a given post using this plugin will only apply to that post's individual post page, and will <em>not</em> be applied on any archive pages."); ?>
 </p>
-<div class="post-styling-options">
+
 <h2><?php _e('General Settings','wp-post-styling'); ?></h2>
 	<form method="post" action="">
 		<fieldset>
@@ -141,33 +171,6 @@
 		<input type="submit" name="submit" class="button-primary"  value="<?php _e('Save WP Post Styling Options','wp-post-styling'); ?>" />
 		</p>
 	</form>
-</div>
-<div class="post-styling-library">
-<h2><?php _e('Custom Style Library','wp-post-styling'); ?></h2>
-	<form method="post" action="">
-	<?php if (isset($_GET['edit_style']))  { ?>
-	<div><input type="hidden" name="edit_style" value="<?php echo (int) $_GET['edit_style']; ?>" /></div>
-	<?php } ?>
-		<fieldset>
-		<legend><?php if (!isset($_GET['edit_style'])) { _e('Add Custom Style to Library','wp-post-styling'); } else { _e('Edit Custom Styles','wp-post-styling'); } ?></legend>
-		<p>
-		<label for="jd_style_library_name"><?php _e('Style Name','wp-post-styling'); ?></label><br /><input type="text" name="jd_style_library_name" id="jd_style_library_name" value="<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; echo jd_post_style_data($id,"name"); } ?>" size="40" />
-		</p>
-		<p>
-		<label for="jd_style_library_css"><?php _e('CSS','wp-post-styling'); ?></label><br /><textarea name="jd_style_library_css" id="jd_style_library_css" rows="6" cols="50"><?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; echo stripcslashes( jd_post_style_data( $id,"css" ) ); } ?></textarea>
-		</p>
-		<p>
-		<label for="jd_style_library_type"><?php _e('Library Type','wp-post-styling'); ?></label> <select name="jd_style_library_type" id="jd_style_library_type"><option value="screen"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "screen") { echo " selected=\"selected\""; } } ?>><?php _e('Screen'); ?></option><option value="mobile"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "mobile") { echo " selected=\"selected\""; } } ?>><?php _e('Mobile'); ?></option><option value="print"<?php if (isset($_GET['edit_style'])) { $id = (int) $_GET['edit_style']; $type = jd_post_style_data($id,"type");  if($type == "print") { echo " selected=\"selected\""; } } ?>><?php _e('Print'); ?></option></select>
-		</p>
-		</fieldset>
-		<div>
-		<input type="hidden" name="submit-type" value="library" />
-		</div>	
-	<p>
-	<input type="submit" name="submit" class="button-primary" value="<?php if (!isset($_GET['edit_style'])) {  _e('Add to WP Post Styling Library','wp-post-styling'); } else { _e('Update WP Post Styling Library','wp-post-styling'); }?>" />	
-	</p>
-	</form>
-<?php if (isset($_GET['edit_style'])) { echo "<p><a href=\"?page=wp-post-styling/wp-post-styling.php\">"; _e('Add New Style','wp-post-styling'); echo "</a></p>"; } ?>
 </div>
 
 <div class="post-styling-entries">
