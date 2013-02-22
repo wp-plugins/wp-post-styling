@@ -19,7 +19,9 @@ $message = '';
 
 	} 
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'library' ) {
-		if ( (($_POST[ 'jd_style_library_name' ] == "") || ($_POST[ 'jd_style_library_css' ] == "") || ($_POST[ 'jd_style_library_type' ] == "")) && !isset($_POST['delete_style']) ) {
+		if ( ( ( !isset( $_POST['jd_style_library_name'] ) || $_POST[ 'jd_style_library_name' ] == "") || 
+				( !isset( $_POST['jd_style_library_css'] ) || $_POST[ 'jd_style_library_css' ] == "") || 
+				( !isset( $_POST['jd_style_library_type'] ) || $_POST[ 'jd_style_library_type' ] == "")) && !isset($_POST['delete_style']) ) {
 		$message = "<ul>";
 			if ( $_POST[ 'jd_style_library_name' ] == "" ) {
 			$message .= "<li>" . __("Please enter a name for this Style Library record.",'wp-post-styling') . "</li>";
@@ -88,10 +90,14 @@ $message = '';
 <h2><?php _e("WP Post Styling Settings", 'wp-post-styling'); ?></h2>
 
 <div class="resources">
+<p>
+<a href="https://twitter.com/intent/tweet?screen_name=joedolson&text=WP%20Post%20Styling%20is%20great%20-%20Thanks!" class="twitter-mention-button" data-size="large" data-related="joedolson">Tweet to @joedolson</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</p>
 <ul>
 <li><a href="http://www.joedolson.com/articles/wp-post-styling/"><?php _e("Get Support",'wp-post-styling'); ?></a></li>
 <li><a href="http://www.joedolson.com/articles/bugs/"><?php _e("Report a bug",'wp-post-styling'); ?></a></li>
-<li><a href="http://wordpress.org/extend/plugins/profile/joedolson"><?php _e("Check out my other plug-ins",'wp-post-styling'); ?></a></li>
+<li><a href="http://profiles.wordpress.org/joedolson"><?php _e("Check out my other plug-ins",'wp-post-styling'); ?></a></li>
 <li><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <div>
 <input type="hidden" name="cmd" value="_s-xclick" />

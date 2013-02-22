@@ -1,4 +1,4 @@
-#wp-post-styling {margin: 0 15px;}
+#wp-post-styling {margin: 0 15px;} 
 #wp-post-styling fieldset {margin: 0;padding:0;border: none;}
 #wp-post-styling legend {font-weight: 700;}
 #wp-post-styling form p {padding: 4px 5px;margin: 2px 0;}
@@ -10,11 +10,7 @@
 #wp-post-styling .resources ul { margin: 10px 0 0;}
 #wp-post-styling .resources form{margin: 0;}
 #wp-style-library {width: 100%;}
-#wp-style-library tr {background: #eaf3fa;}
-#wp-style-library tr.odd {background: none;}
-#wp-style-library td, #wp-style-library th {padding: 3px;}
-#wp-style-library th {border: 1px solid #d9e2f9;}
-#wp-style-library .delete a {background: #a00;color: #fff;padding: 2px 8px;font-size: .8em;border: 1px solid #fff;border-radius: 8px;text-decoration: none;}
-#wp-style-library .delete { text-align: center;}
-#wp-style-library .delete:hover, #wp-style-library .delete:focus {border: 1px solid #999;background: #b11;}
+#wp-style-library tr.odd {background: #fafafa;}
+#wp-style-library .delete a {color: red; text-decoration: none;}
+#wp-style-library .delete a:hover, #wp-style-library .delete a:focus { text-decoration: underline; }
 .post-styling-entries { clear: both; }

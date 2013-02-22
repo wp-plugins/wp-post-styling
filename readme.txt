@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: css, post, page, custom, css, admin, mobile, print, design
 Requires at least: 2.5
-Tested up to: 3.4.1
+Tested up to: 3.5.1
 Stable tag: trunk
 
 Define custom styles for any post, page, or custom post type. Example: journal-style publications which want to create a unique design for articles.
@@ -30,6 +30,14 @@ Note: custom styles will not be included on archive pages; only on single post/P
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
 == Changelog ==
+
+= 1.2.6 =
+
+* Miscellaneous wpdb changes, updated coding style. 
+* Use of wpdb->prepare where appropriate.
+* Minor style changes.
+* Added plug-in page header image.
+* Fixed a couple PHP notices
 
 = 1.2.5 =
 

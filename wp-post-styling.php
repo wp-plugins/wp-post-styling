@@ -3,11 +3,11 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.2.5
+Version: 1.2.6
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
-/*  Copyright 2008-2012  Joseph C Dolson  (email : wp-post-styling@joedolson.com)
+/*  Copyright 2008-2013  Joseph C Dolson  (email : wp-post-styling@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ if ( version_compare( $version, '1.2.3',"<" )) {
 	// update all post meta to match new format
 	jd_fix_post_style_meta();
 }
-$version = '1.2.5';
+$version = '1.2.6';
 update_option( 'wp_post_styling_version',$version );
 
 // Exit if below version requirements
@@ -70,40 +70,33 @@ if ( version_compare( $wp_version,"2.5","<" )) {
 
 function insert_new_library_style( $name, $css, $type) {
 	global $wpdb;
-	$name = $wpdb->escape($name);
-	$css = $wpdb->escape($css);
-	$type = $wpdb->escape($type);
 	$table_name = $wpdb->prefix . "post_styling_library";
-	$query = "INSERT INTO `$table_name` (`name`,`css`,`type`)
-		VALUES ('$name','$css','$type')";
-		$results = $wpdb->query($query);
+	$query = "INSERT INTO $table_name (`name`,`css`,`type`) VALUES ('%s','%s','%s')";
+		$results = $wpdb->query( $wpdb->prepare($query, $name, $css, $type ) );
 	if ($results) {
-	return TRUE;
+		return TRUE;
 	} else {
-	return FALSE;
+		return FALSE;
 	}
 }	
 	
 function update_library_style( $id, $name, $css, $type) {
 	global $wpdb;
-	$name = $wpdb->escape($name);
-	$css = $wpdb->escape($css);
-	$type = $wpdb->escape($type);
 	$table_name = $wpdb->prefix . "post_styling_library";
-	$query = "UPDATE `$table_name` SET `name`='$name',`css`='$css',`type`='$type' WHERE `id`=$id";
-		$results = $wpdb->query($query);
+	$query = "UPDATE $table_name SET `name`='%s',`css`='%s',`type`='%s' WHERE `id`=%d";
+		$results = $wpdb->query( $wpdb->prepare($query, $name, $css, $type, $id ) );
 	if ($results) {
-	return TRUE;
+		return TRUE;
 	} else {
-	return FALSE;
+		return FALSE;
 	}
 }	
 
 function delete_library_style( $id ) {
 	global $wpdb;
 	$table_name = $wpdb->prefix . "post_styling_library";
-	$query = "DELETE FROM `$table_name` WHERE `id`=$id";
-		$results = $wpdb->query($query);
+	$query = "DELETE FROM $table_name WHERE id=$id";
+		$results = $wpdb->query( $query );
 	if ($results) {
 	return TRUE;
 	} else {
@@ -115,43 +108,35 @@ function jd_create_post_styling_library_table() {
 	global $wpdb;
 	$post_styling_db_version = "1.0";	
 	$table_name = $wpdb->prefix . "post_styling_library";
-    if ( $wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name ) {
 	$sql = "CREATE TABLE " . $table_name . " (
 	  id mediumint(9) NOT NULL AUTO_INCREMENT,
 	  name tinytext NOT NULL,
 	  css text NOT NULL,
 	  type VARCHAR(32) NOT NULL,
 	  UNIQUE KEY id (id)
-	);";
-	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	dbDelta($sql);
+	);";	
+    if ( $wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name ) {
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		dbDelta($sql);
 	}	
 	add_option( "post_styling_db_version", $post_styling_db_version );	
     $installed_ver = get_option( "post_styling_db_version" );
     if ( $installed_ver != $post_styling_db_version ) {
-	$sql = "CREATE TABLE " . $table_name . " (
-	  id mediumint(9) NOT NULL AUTO_INCREMENT,
-	  name tinytext NOT NULL,
-	  css text NOT NULL,
-	  type VARCHAR(32) NOT NULL,
-	  UNIQUE KEY id (id)
-	);";
-      //require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); 
-    dbDelta($sql);
-    update_option( "post_styling_db_version", $post_styling_db_version );
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); 
+		dbDelta($sql);
+		update_option( "post_styling_db_version", $post_styling_db_version );
 	}
 }	
 
-function jd_post_style_library_selector($current="screen") {
-	// select library items from database where library is print
+function jd_post_style_library_selector($library="screen") {
+	// select library items from database where library is $library
 	global $wpdb;
 	$prefix = $wpdb->prefix;
 	$dbtable = $prefix . 'post_styling_library';
 	$results = $wpdb->get_results(
 		"SELECT `name`, `css`
 		FROM `$dbtable`
-		WHERE `type` = '$current'
+		WHERE `type` = '$library'
 		ORDER BY name ASC
 		");
 		
@@ -165,18 +150,15 @@ function jd_post_style_library_selector($current="screen") {
 }
 	
 function jd_post_style_data($id,$datatype) {
-	// select library items from database where library is print
+	// select library items from database where datatype is $datatype
 	global $wpdb;
-	$prefix = $wpdb->prefix;
-	$dbtable = $prefix . 'post_styling_library';
-	$results = $wpdb->get_results(
-		"SELECT `$datatype`
-		FROM `$dbtable`
-		WHERE `id` = '$id'
-		");
+	$dbtable = $wpdb->prefix . 'post_styling_library';
+	$datatype = esc_sql($datatype);
+	$id = (int) $id;
+	$results = $wpdb->get_results( "SELECT $datatype FROM $dbtable WHERE id = $id" );
 	if (count($results)) {
 		foreach ($results as $result) {
-			return $result->$datatype;
+			return $result->{$datatype};
 		}
 	} 		
 }	
@@ -184,12 +166,11 @@ function jd_post_style_data($id,$datatype) {
 function jd_post_style_library_listing() {
 	// select all library items from database 
 	global $wpdb;
-	$table = "<table id=\"wp-style-library\" summary=\"".__('Listing of CSS patterns in the Style Library.','wp-post-styling')."\">
+	$table = "<table id=\"wp-style-library\" class=\"widefat\" summary=\"".__('Listing of CSS patterns in the Style Library.','wp-post-styling')."\">
 <thead>\n<tr>\n	<th scope=\"col\">".__('Name','wp-post-styling')."</th>\n	<th scope=\"col\">".__('Styles','wp-post-styling')."</th>\n	<th scope=\"col\">".__('Type','wp-post-styling')."</th>\n	<th>".__('Delete','wp-post-styling')."</th>\n</tr>\n</thead>
 <tbody>\n";
 	$table_end = "</tbody>\n</table>";
-	$prefix = $wpdb->prefix;
-	$dbtable = $prefix . 'post_styling_library';
+	$dbtable = $wpdb->prefix . 'post_styling_library';
 	$results = $wpdb->get_results(
 		"SELECT `id`, `name`, `css`, `type`
 		FROM `$dbtable`
@@ -270,9 +251,7 @@ function jd_add_post_styling_inner_box() {
 	<p>
 	<label for="jd_post_styling_screen_library"><?php _e('Custom Screen Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_screen_library" name="jd_post_styling_screen_library">
 	<option value="none">Select library style</option>
-	<?php
-	jd_post_style_library_selector("screen");
-	?>
+	<?php jd_post_style_library_selector("screen"); ?>
 	</select>
 	</p>
 	<?php } ?>
@@ -284,9 +263,7 @@ function jd_add_post_styling_inner_box() {
 		<p>
 	<label for="jd_post_styling_mobile_library"><?php _e('Custom Mobile Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_mobile_library" name="jd_post_styling_mobile_library">
 	<option value="none">Select library style</option>
-	<?php
-	jd_post_style_library_selector("mobile");
-	?>	
+	<?php jd_post_style_library_selector("mobile"); ?>	
 	</select>
 	</p>
 	<?php } ?>
@@ -298,13 +275,10 @@ function jd_add_post_styling_inner_box() {
 	<p>
 	<label for="jd_post_styling_print_library"><?php _e('Custom Print Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_print_library" name="jd_post_styling_print_library">
 	<option value="none">Select library style</option>
-	<?php
-	jd_post_style_library_selector("print");
-	?>
+	<?php jd_post_style_library_selector("print"); ?>
 	</select>
 	</p>	
 	<?php } ?>
-	
 	<p><a target="__blank" href="http://www.joedolson.com/articles/wp-post-styling/"><?php _e('Get Support', 'wp-post-styling') ?></a> &raquo;
 </p>
 <p>
