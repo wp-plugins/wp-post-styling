@@ -3,18 +3,16 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: css, post, page, custom, css, admin, mobile, print, design
 Requires at least: 2.5
-Tested up to: 3.5.1
+Tested up to: 3.6
 Stable tag: trunk
 
 Define custom styles for any post, page, or custom post type. Example: journal-style publications which want to create a unique design for articles.
 
 == Description ==
 
-This plugin provides a custom field on your WordPress interface where you can add custom styles to be applied only on that page or post. Useful for being able to publish articles with a unique look.
+Adds a custom field to your post editing screens to add custom styles applied only on that page or post.
 
-You can attach custom styles to any page, post, or custom post type. Separate styles can be attached for print, screen, or mobile. You can also store your own library of frequently-used styles. 
-
-The use you'll get out of this plugin depends on the flexibility of the theme you're using and your own knowledge of CSS (Cascading Style Sheets).
+Attach custom styles to any page, post, or custom post type. Separate styles can be attached for print, screen, or mobile. You can also store your own library of frequently-used styles. 
 
 How to use the style library:
 
@@ -23,13 +21,31 @@ How to use the style library:
 1. Select the library style from the drop down, leaving the style textarea blank.
 1. Update or post the new document.
 
-A newly-selected style from the style library will always overwrite any previous hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template. Editing your saved stylesheets will have no impact on previously saved post-specific styles. 
+A newly-selected style from the style library will always overwrite any previous hand-written styles. If you wish to alter the library styles for a specific page, you can do this in the textarea after you've saved the page with the style library template.
+
+By default, editing your saved stylesheets will have no impact on previously saved post-specific styles; set the option to pull styles from the library to change this. 
 
 Note: custom styles will not be included on archive pages; only on single post/Page views.
 
+The use you'll get out of this plugin depends on the flexibility of the theme you're using and your own knowledge of CSS (Cascading Style Sheets).
+
+= Translations =
+
+Available languages (in order of completeness):
+Japanese, Irish, Russian
+
+Visit the [WP Post Styling translations site](http://translate.joedolson.com/projects/wp-post-styling) to check the progress of a translation.
+
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
+<a href="http://www.joedolson.com/articles/translator-credits/">Translator Credits</a>
+
 == Changelog ==
+
+= 1.2.7 =
+
+* Added languages: Irish Gaelic, Japanese
+* New feature: Use styles directly from the library.
 
 = 1.2.6 =
 

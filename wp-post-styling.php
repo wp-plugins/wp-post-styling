@@ -3,7 +3,7 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.2.6
+Version: 1.2.7
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -57,8 +57,8 @@ if ( version_compare( $version, '1.2.3',"<" )) {
 	// update all post meta to match new format
 	jd_fix_post_style_meta();
 }
-$version = '1.2.6';
-update_option( 'wp_post_styling_version',$version );
+$wps_version = '1.2.7';
+update_option( 'wp_post_styling_version',$wps_version );
 
 // Exit if below version requirements
 
@@ -128,21 +128,28 @@ function jd_create_post_styling_library_table() {
 	}
 }	
 
-function jd_post_style_library_selector($library="screen") {
+function jd_post_style_library_selector( $library="screen", $selected='' ) {
 	// select library items from database where library is $library
 	global $wpdb;
 	$prefix = $wpdb->prefix;
 	$dbtable = $prefix . 'post_styling_library';
 	$results = $wpdb->get_results(
-		"SELECT `name`, `css`
+		"SELECT `id`, `name`, `css`
 		FROM `$dbtable`
 		WHERE `type` = '$library'
 		ORDER BY name ASC
 		");
-		
+	
 	if (count($results)) {
 		foreach ($results as $result) {
-			echo '<option value="'. htmlspecialchars($result->css).'">'. ($result->name) .'</option>'."\n";
+			if ( get_option( 'jd-post-styling-library' ) == 1 ) { 
+				$value = (int) $result->id;
+				$checked = ( $selected == $value )?' selected="selected"':'';	
+			} else {
+				$value = htmlspecialchars($result->css);
+				$checked = '';
+			}
+			echo '<option value="'.$value.'"'.$checked.'>'. ($result->name) .'</option>'."\n";
 		}
 	} else {
 		echo '<option value="none">'.__('Library is empty.','wp-post-styling').'</option>';
@@ -245,39 +252,46 @@ function jd_add_post_styling_inner_box() {
 	}
 	?>
 	<?php if ( get_option( 'jd-post-styling-screen' ) == '1' ) { ?>
-	<p>
-	<label for="jd_post_styling_screen"><?php _e('Custom Screen Styles For This Post', 'wp-post-styling'); ?></label><br /><textarea name="jd_post_styling_screen" id="jd_post_styling_screen" rows="<?php echo $jd_box_size; ?>" cols="70"><?php echo $jd_post_styling_screen; ?></textarea>
-	</p>
-	<p>
-	<label for="jd_post_styling_screen_library"><?php _e('Custom Screen Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_screen_library" name="jd_post_styling_screen_library">
-	<option value="none">Select library style</option>
-	<?php jd_post_style_library_selector("screen"); ?>
-	</select>
-	</p>
+		<?php if ( get_option( 'jd-post-styling-library' ) != 1 ) { ?>
+			<p>
+			<label for="jd_post_styling_screen"><?php _e('Custom Screen Styles For This Post', 'wp-post-styling'); ?></label>
+				<br /><textarea name="jd_post_styling_screen" id="jd_post_styling_screen" rows="<?php echo $jd_box_size; ?>" cols="70"><?php echo $jd_post_styling_screen; ?></textarea>
+			</p>
+		<?php } ?>	
+		<p>
+		<label for="jd_post_styling_screen_library"><?php _e('Custom Screen Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_screen_library" name="jd_post_styling_screen_library">
+		<option value="none"><?php _e( 'Select library style', 'wp-post-styling' ); ?></option>
+		<?php jd_post_style_library_selector("screen", $jd_post_styling_screen ); ?>
+		</select>
+		</p>
 	<?php } ?>
 	
 	<?php if ( get_option( 'jd-post-styling-mobile' ) == '1' ) { ?>
-	<p>
-	<label for="jd_post_styling_mobile"><?php _e('Custom Mobile Styles For This Post', 'wp-post-styling') ?></label><br /><textarea name="jd_post_styling_mobile" id="jd_post_styling_mobile" rows="<?php echo $jd_box_size; ?>" cols="70"><?php echo $jd_post_styling_mobile ?></textarea>
-	</p>
+		<?php if ( get_option( 'jd-post-styling-library' ) != 1 ) { ?>
+			<p>
+			<label for="jd_post_styling_mobile"><?php _e('Custom Mobile Styles For This Post', 'wp-post-styling') ?></label><br /><textarea name="jd_post_styling_mobile" id="jd_post_styling_mobile" rows="<?php echo $jd_box_size; ?>" cols="70"><?php echo $jd_post_styling_mobile ?></textarea>
+			</p>
+		<?php } ?>
 		<p>
-	<label for="jd_post_styling_mobile_library"><?php _e('Custom Mobile Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_mobile_library" name="jd_post_styling_mobile_library">
-	<option value="none">Select library style</option>
-	<?php jd_post_style_library_selector("mobile"); ?>	
-	</select>
-	</p>
+		<label for="jd_post_styling_mobile_library"><?php _e('Custom Mobile Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_mobile_library" name="jd_post_styling_mobile_library">
+		<option value="none"><?php _e( 'Select library style', 'wp-post-styling' ); ?></option>
+		<?php jd_post_style_library_selector("mobile", $jd_post_styling_mobile); ?>	
+		</select>
+		</p>
 	<?php } ?>
 	
 	<?php if ( get_option( 'jd-post-styling-print' ) == '1' ) { ?>
-	<p>
-	<label for="jd_post_styling_print"><?php _e('Custom Print Styles For This Post', 'wp-post-styling') ?></label><br /><textarea name="jd_post_styling_print" id="jd_post_styling_print" rows="<?php echo $jd_box_size; ?>" cols="70"><?php echo $jd_post_styling_print ?></textarea>
-	</p>
-	<p>
-	<label for="jd_post_styling_print_library"><?php _e('Custom Print Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_print_library" name="jd_post_styling_print_library">
-	<option value="none">Select library style</option>
-	<?php jd_post_style_library_selector("print"); ?>
-	</select>
-	</p>	
+		<?php if ( get_option( 'jd-post-styling-library' ) != 1 ) { ?>
+			<p>
+			<label for="jd_post_styling_print"><?php _e('Custom Print Styles For This Post', 'wp-post-styling') ?></label><br /><textarea name="jd_post_styling_print" id="jd_post_styling_print" rows="<?php echo $jd_box_size; ?>" cols="70"><?php echo $jd_post_styling_print ?></textarea>
+			</p>
+		<?php } ?>
+		<p>
+		<label for="jd_post_styling_print_library"><?php _e('Custom Print Style Library','wp-post-styling'); ?></label><br /><select id="jd_post_styling_print_library" name="jd_post_styling_print_library">
+		<option value="none"><?php _e( 'Select library style', 'wp-post-styling' ); ?></option>
+		<?php jd_post_style_library_selector("print", $jd_post_styling_print ); ?>
+		</select>
+		</p>	
 	<?php } ?>
 	<p><a target="__blank" href="http://www.joedolson.com/articles/wp-post-styling/"><?php _e('Get Support', 'wp-post-styling') ?></a> &raquo;
 </p>
@@ -308,37 +322,47 @@ function jd_add_post_styling_outer_box() {
 }
 // Post the custom styles into the post meta table
 function set_jd_post_styling( $id ) {
-	if (isset($_POST['jd_post_styling_screen'])) {
-		$jd_post_styling_screen = $_POST[ 'jd_post_styling_screen' ];
-		$jd_post_styling_screen_library = $_POST[ 'jd_post_styling_screen_library' ];
-			if ($jd_post_styling_screen_library == "none") {
-				if (isset($jd_post_styling_screen) && !empty($jd_post_styling_screen)) {
-				update_post_meta( $id, '_jd_post_styling_screen', $jd_post_styling_screen );
+	// consider: add option to pull styles by reference instead of from post meta. 
+	if ( isset($_POST['jd_post_styling_screen_library']) ) {
+		$screen = $_POST[ 'jd_post_styling_screen' ];
+		$library = $_POST[ 'jd_post_styling_screen_library' ];
+		if ( !isset( $_POST['jd_post_styling_screen']) ) {
+			$screen = (int) $library;
+		}
+			if ( $library == "none" ) {
+				if ( isset($screen) && !empty($screen) ) {
+					update_post_meta( $id, '_jd_post_styling_screen', $screen );
 				}
 			} else {
-				update_post_meta( $id, '_jd_post_styling_screen', $jd_post_styling_screen_library );
+				update_post_meta( $id, '_jd_post_styling_screen', $library );
 			}
 	}
-	if (isset($_POST['jd_post_styling_print'])) {
-		$jd_post_styling_print = $_POST[ 'jd_post_styling_print' ];
-		$jd_post_styling_print_library = $_POST[ 'jd_post_styling_print_library' ];
-			if ($jd_post_styling_print_library == "none") {	
-				if (isset($jd_post_styling_print) && !empty($jd_post_styling_print)) {
-				update_post_meta( $id, '_jd_post_styling_print', $jd_post_styling_print );
+	if (isset($_POST['jd_post_styling_print_library'])) {
+		$print = $_POST[ 'jd_post_styling_print' ];
+		$library = $_POST[ 'jd_post_styling_print_library' ];
+		if ( !isset( $_POST['jd_post_styling_print']) ) {
+			$screen = (int) $library;
+		}		
+			if ($library == "none") {	
+				if (isset($print) && !empty($print)) {
+					update_post_meta( $id, '_jd_post_styling_print', $print );
 				}
 			} else {
-				update_post_meta( $id, '_jd_post_styling_print', $jd_post_styling_print_library );
+				update_post_meta( $id, '_jd_post_styling_print', $library );
 			}
 	}
 	if (isset($_POST['jd_post_styling_mobile'])) {
-		$jd_post_styling_mobile = $_POST[ 'jd_post_styling_mobile' ];
-		$jd_post_styling_mobile_library = $_POST[ 'jd_post_styling_mobile_library' ];
-			if ($jd_post_styling_mobile_library == "none") {	
-				if (isset($jd_post_styling_mobile) && !empty($jd_post_styling_mobile)) {
-				update_post_meta( $id, '_jd_post_styling_mobile', $jd_post_styling_mobile );
+		$mobile = $_POST[ 'jd_post_styling_mobile' ];
+		$library = $_POST[ 'jd_post_styling_mobile_library' ];
+		if ( !isset( $_POST['jd_post_styling_mobile']) ) {
+			$screen = (int) $library;
+		}		
+			if ($library == "none") {	
+				if (isset($mobile) && !empty($mobile)) {
+					update_post_meta( $id, '_jd_post_styling_mobile', $mobile );
 				}		
 			} else {
-				update_post_meta( $id, '_jd_post_styling_mobile', $jd_post_styling_mobile_library );
+				update_post_meta( $id, '_jd_post_styling_mobile', $library );
 			}
 	}
 	if (isset($_POST['jd_style_this'])) {
@@ -358,34 +382,40 @@ function post_jd_post_styling() {
 	$this_post = $wp_query->get_queried_object();
 	if (is_object($this_post)) {
 	$id = $this_post->ID;
-	if ( get_post_meta( $id, '_jd_style_this', TRUE ) == 'enable' ) {
-echo "<!-- Styles Added by WP Post Styling (http://www.joedolson.com/articles/wp-post-styling/) -->\n";
+		if ( get_post_meta( $id, '_jd_style_this', TRUE ) == 'enable' ) {
 			if ( get_post_meta( $id, '_jd_post_styling_screen', TRUE) != '') {
-			$this_post_styles = stripcslashes( get_post_meta( $id, '_jd_post_styling_screen', TRUE ) );
+				$this_post_styles = stripcslashes( get_post_meta( $id, '_jd_post_styling_screen', TRUE ) );
+				if ( get_option( 'jd-post-styling-library') == 1 )  {
+					$this_post_styles = stripcslashes( jd_post_style_data($this_post_styles,'css') );
+				}
 			echo "
 <style type='text/css' media='screen'>\n
-$this_post_styles\n
+	$this_post_styles\n
 </style>\n";
 			}
 			if ( get_post_meta( $id, 'jd_post_styling_mobile', TRUE) != '' ) {
-			$this_post_styles = stripcslashes( get_post_meta( $id, '_jd_post_styling_mobile', TRUE ) );
+				$this_post_styles = stripcslashes( get_post_meta( $id, '_jd_post_styling_mobile', TRUE ) );
+				if ( get_option( 'jd-post-styling-library') == 1 ) {
+					$this_post_styles = stripcslashes( jd_post_style_data($this_post_styles,'css') );
+				}				
 			echo "
 <style type='text/css' media='handheld'>\n
-$this_post_styles\n
+	$this_post_styles\n
 </style>\n";
 			}
 			if ( get_post_meta( $id, 'jd_post_styling_print', TRUE) != '' ) {
-			$this_post_styles = stripcslashes( get_post_meta( $id, '_jd_post_styling_print', TRUE ) );
+				$this_post_styles = stripcslashes( get_post_meta( $id, '_jd_post_styling_print', TRUE ) );
+				if ( get_option( 'jd-post-styling-library') == 1 ) {
+					$this_post_styles = stripcslashes( jd_post_style_data($this_post_styles,'css') );
+				}			
 			echo "
 <style type='text/css' media='print'>\n
-$this_post_styles\n
+	$this_post_styles\n
 </style>\n";
 			}	
-echo "<!-- End WP Post Styling -->\n";	
-	}
+		}
 	}
 }
-
 
 // Add the administrative settings to the "Settings" menu.
 
@@ -433,5 +463,3 @@ add_filter('plugin_action_links', 'jd_post_styling_plugin_action', -10, 2);
 add_action( 'save_post', 'set_jd_post_styling' );
 add_action( 'wp_head','post_jd_post_styling' );
 register_activation_hook(__FILE__,'jd_create_post_styling_library_table');
-
-?>
