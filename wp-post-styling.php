@@ -3,11 +3,11 @@
 Plugin Name: WP Post Styling
 Plugin URI: http://www.joedolson.com/articles/wp-post-styling/
 Description: Allows you to define custom styles for any specific post or page on your WordPress site. Helps reduce clutter in your stylesheet.
-Version: 1.2.7
+Version: 1.2.8
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
-/*  Copyright 2008-2013  Joseph C Dolson  (email : wp-post-styling@joedolson.com)
+/*  Copyright 2008-2014  Joseph C Dolson  (email : wp-post-styling@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,16 +57,12 @@ if ( version_compare( $version, '1.2.3',"<" )) {
 	// update all post meta to match new format
 	jd_fix_post_style_meta();
 }
-$wps_version = '1.2.7';
+$wps_version = '1.2.8';
 update_option( 'wp_post_styling_version',$wps_version );
 
 // Exit if below version requirements
 
 $exit_msg=__('WP Post Styling requires WordPress 2.5 or more recent. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>');
-
-if ( version_compare( $wp_version,"2.5","<" )) {
-	exit ($exit_msg);
-}
 
 function insert_new_library_style( $name, $css, $type) {
 	global $wpdb;
@@ -324,11 +320,8 @@ function jd_add_post_styling_outer_box() {
 function set_jd_post_styling( $id ) {
 	// consider: add option to pull styles by reference instead of from post meta. 
 	if ( isset($_POST['jd_post_styling_screen_library']) ) {
-		$screen = $_POST[ 'jd_post_styling_screen' ];
 		$library = $_POST[ 'jd_post_styling_screen_library' ];
-		if ( !isset( $_POST['jd_post_styling_screen']) ) {
-			$screen = (int) $library;
-		}
+		$screen = ( isset( $_POST['jd_post_styling_screen'] ) ) ? $_POST[ 'jd_post_styling_screen' ] : (int) $library;
 			if ( $library == "none" ) {
 				if ( isset($screen) && !empty($screen) ) {
 					update_post_meta( $id, '_jd_post_styling_screen', $screen );
