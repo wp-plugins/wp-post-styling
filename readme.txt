@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: css, post, page, custom, css, admin, mobile, print, design
 Requires at least: 3.0
-Tested up to: 3.9
+Tested up to: 4.2
 Stable tag: trunk
 
 Define custom styles for any post, page, or custom post type. Example: journal-style publications which want to create a unique design for articles.
@@ -41,6 +41,14 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 <a href="http://www.joedolson.com/articles/translator-credits/">Translator Credits</a>
 
 == Changelog ==
+
+= 1.2.9 =
+
+* Removed some code for UI compatibility with WP previous to 2.7
+* Added some missing textdomains
+* Updated UI to match other plug-in UIs.
+* Updated code usage
+* Improved escaping
 
 = 1.2.8 =
 
